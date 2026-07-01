@@ -1,0 +1,43 @@
+2024-11-12T12:31:05Z INFO  [payment-service] txn=txn-001 partner=fincore provider=nexopay biller=CFE status=success latency=1203ms
+2024-11-12T12:35:18Z INFO  [payment-service] txn=txn-002 partner=fincore provider=openpay biller=TELMEX status=success latency=890ms
+2024-11-12T13:01:44Z INFO  [payment-service] txn=txn-003 partner=fincore provider=nexopay biller=CFE status=success latency=1450ms
+2024-11-12T13:42:11Z INFO  [payment-service] txn=txn-004 partner=other_partner provider=nexopay biller=CFE status=success latency=1102ms
+2024-11-12T13:55:00Z INFO  [payment-service] txn=txn-005 partner=fincore provider=openpay biller=TELMEX status=success latency=755ms
+2024-11-12T13:58:44Z INFO  [payment-service] txn=txn-006 partner=fincore provider=nexopay biller=CFE status=success latency=1340ms
+2024-11-12T14:00:11Z INFO  [payment-service] txn=txn-007 partner=other_partner provider=openpay biller=IZZI status=success latency=812ms
+2024-11-12T14:02:30Z INFO  [payment-service] txn=txn-008 partner=fincore provider=nexopay biller=CFE status=success latency=1280ms
+2024-11-12T14:05:18Z INFO  [payment-service] txn=txn-009 partner=fincore provider=openpay biller=TOTALPLAY status=success latency=698ms
+2024-11-12T14:07:00Z INFO  [payment-service] txn=txn-010 partner=fincore provider=nexopay biller=CFE status=success latency=1390ms
+2024-11-12T14:09:33Z ERROR [payment-service] txn=txn-011 partner=fincore provider=nexopay biller=CFE status=failed error=PROVIDER_TIMEOUT latency=30001ms attempt=1/3
+2024-11-12T14:09:34Z ERROR [payment-service] txn=txn-011 partner=fincore provider=nexopay biller=CFE status=failed error=PROVIDER_TIMEOUT latency=30001ms attempt=2/3
+2024-11-12T14:09:35Z ERROR [payment-service] txn=txn-011 partner=fincore provider=nexopay biller=CFE status=failed error=PROVIDER_TIMEOUT latency=30001ms attempt=3/3
+2024-11-12T14:10:01Z ERROR [payment-service] txn=txn-012 partner=fincore provider=nexopay biller=CFE status=failed error=PROVIDER_TIMEOUT latency=30002ms attempt=1/3
+2024-11-12T14:10:02Z ERROR [payment-service] txn=txn-012 partner=fincore provider=nexopay biller=CFE status=failed error=PROVIDER_TIMEOUT latency=30001ms attempt=2/3
+2024-11-12T14:10:44Z INFO  [payment-service] txn=txn-013 partner=fincore provider=openpay biller=IZZI status=success latency=760ms
+2024-11-12T14:11:02Z ERROR [payment-service] txn=txn-014 partner=fincore provider=nexopay biller=CFE status=failed error=PROVIDER_TIMEOUT latency=30001ms attempt=1/3
+2024-11-12T14:11:30Z INFO  [payment-service] txn=txn-015 partner=fincore provider=openpay biller=TOTALPLAY status=success latency=820ms
+2024-11-12T14:12:05Z ERROR [payment-service] txn=txn-016 partner=fincore provider=nexopay biller=CFE status=failed error=PROVIDER_TIMEOUT latency=30001ms attempt=1/3
+2024-11-12T14:12:44Z ERROR [payment-service] txn=txn-017 partner=other_partner provider=nexopay biller=CFE status=failed error=PROVIDER_TIMEOUT latency=30003ms attempt=1/3
+2024-11-12T14:13:01Z INFO  [payment-service] txn=txn-018 partner=fincore provider=openpay biller=TELMEX status=success latency=811ms
+2024-11-12T14:13:22Z ERROR [payment-service] txn=txn-019 partner=fincore provider=nexopay biller=CFE status=failed error=PROVIDER_TIMEOUT latency=30001ms attempt=1/3
+2024-11-12T14:14:00Z ERROR [payment-service] txn=txn-020 partner=fincore provider=nexopay biller=CFE status=failed error=PROVIDER_TIMEOUT latency=30001ms attempt=1/3
+2024-11-12T14:14:30Z ERROR [payment-service] txn=txn-021 partner=fincore provider=nexopay biller=CFE status=failed error=PROVIDER_TIMEOUT latency=30001ms attempt=1/3
+2024-11-12T14:15:02Z ERROR [payment-service] txn=txn-022 partner=fincore provider=nexopay biller=CFE status=failed error=PROVIDER_TIMEOUT latency=30002ms attempt=1/3
+2024-11-12T14:15:45Z INFO  [payment-service] txn=txn-023 partner=fincore provider=openpay biller=IZZI status=success latency=745ms
+2024-11-12T14:16:11Z ERROR [payment-service] txn=txn-024 partner=fincore provider=nexopay biller=CFE status=failed error=PROVIDER_TIMEOUT latency=30001ms attempt=1/3
+2024-11-12T14:16:50Z ERROR [payment-service] txn=txn-025 partner=fincore provider=nexopay biller=CFE status=failed error=PROVIDER_TIMEOUT latency=30003ms attempt=1/3
+2024-11-12T14:17:00Z ERROR [payment-service] txn=txn-026 partner=other_partner provider=nexopay biller=CFE status=failed error=PROVIDER_TIMEOUT latency=30001ms attempt=1/3
+2024-11-12T14:17:30Z ERROR [payment-service] txn=txn-027 partner=fincore provider=nexopay biller=CFE status=failed error=PROVIDER_TIMEOUT latency=30001ms attempt=1/3
+2024-11-12T14:18:05Z INFO  [payment-service] txn=txn-028 partner=fincore provider=openpay biller=TOTALPLAY status=success latency=803ms
+2024-11-12T14:18:44Z ERROR [payment-service] txn=txn-029 partner=fincore provider=nexopay biller=CFE status=failed error=PROVIDER_TIMEOUT latency=30001ms attempt=1/3
+2024-11-12T14:19:01Z ERROR [payment-service] txn=txn-030 partner=fincore provider=nexopay biller=CFE status=failed error=PROVIDER_TIMEOUT latency=30001ms attempt=1/3
+2024-11-12T14:19:30Z ERROR [payment-service] txn=txn-031 partner=fincore provider=nexopay biller=CFE status=failed error=PROVIDER_TIMEOUT latency=30002ms attempt=1/3
+2024-11-12T14:20:00Z ERROR [payment-service] txn=txn-032 partner=fincore provider=nexopay biller=CFE status=failed error=PROVIDER_TIMEOUT latency=30001ms attempt=1/3
+2024-11-12T14:20:30Z INFO  [payment-service] txn=txn-033 partner=fincore provider=openpay biller=TELMEX status=success latency=788ms
+2024-11-12T14:21:00Z ERROR [payment-service] txn=txn-034 partner=fincore provider=nexopay biller=CFE status=failed error=PROVIDER_TIMEOUT latency=30001ms attempt=1/3
+2024-11-12T14:21:30Z ERROR [payment-service] txn=txn-035 partner=fincore provider=nexopay biller=CFE status=failed error=PROVIDER_TIMEOUT latency=30003ms attempt=1/3
+2024-11-12T14:22:00Z ERROR [payment-service] txn=txn-036 partner=fincore provider=nexopay biller=CFE status=failed error=PROVIDER_TIMEOUT latency=30001ms attempt=1/3
+2024-11-12T14:22:30Z ERROR [payment-service] txn=txn-037 partner=other_partner provider=nexopay biller=CFE status=failed error=PROVIDER_TIMEOUT latency=30001ms attempt=1/3
+2024-11-12T14:23:00Z INFO  [payment-service] txn=txn-038 partner=fincore provider=openpay biller=IZZI status=success latency=731ms
+2024-11-12T14:23:30Z ERROR [payment-service] txn=txn-039 partner=fincore provider=nexopay biller=CFE status=failed error=PROVIDER_TIMEOUT latency=30001ms attempt=1/3
+2024-11-12T14:24:00Z ERROR [payment-service] txn=txn-040 partner=fincore provider=nexopay biller=CFE status=failed error=PROVIDER_TIMEOUT latency=30001ms attempt=1/3

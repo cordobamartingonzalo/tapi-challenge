@@ -1,0 +1,61 @@
+-- ============================================================
+-- Tapi Technical Challenge — Fake DB (transactions)
+-- Import en DBeaver, TablePlus, psql o SQLite
+-- ============================================================
+
+CREATE TABLE transactions (
+    id              VARCHAR(36) PRIMARY KEY,
+    created_at      TIMESTAMP,
+    partner_id      VARCHAR(20),
+    user_id         VARCHAR(36),
+    biller_id       VARCHAR(30),
+    biller_category VARCHAR(30),
+    amount          NUMERIC(10,2),
+    status          VARCHAR(20),
+    error_code      VARCHAR(50),
+    error_message   TEXT,
+    provider        VARCHAR(30),
+    country         VARCHAR(5)
+);
+
+INSERT INTO transactions VALUES
+('txn-001','2024-11-12 12:31:05','fincore','u-8821','CFE','electricity',850.00,'success',NULL,NULL,'nexopay','MX'),
+('txn-002','2024-11-12 12:35:18','fincore','u-2244','TELMEX','telecom',299.00,'success',NULL,NULL,'openpay','MX'),
+('txn-003','2024-11-12 13:01:44','fincore','u-5531','CFE','electricity',1200.00,'success',NULL,NULL,'nexopay','MX'),
+('txn-004','2024-11-12 13:42:11','other_partner','u-0091','CFE','electricity',670.00,'success',NULL,NULL,'nexopay','MX'),
+('txn-005','2024-11-12 13:55:00','fincore','u-4410','TELMEX','telecom',399.00,'success',NULL,NULL,'openpay','MX'),
+('txn-006','2024-11-12 13:58:44','fincore','u-3320','CFE','electricity',530.00,'success',NULL,NULL,'nexopay','MX'),
+('txn-007','2024-11-12 14:00:11','other_partner','u-0055','IZZI','telecom',199.00,'success',NULL,NULL,'openpay','MX'),
+('txn-008','2024-11-12 14:02:30','fincore','u-7710','CFE','electricity',760.00,'success',NULL,NULL,'nexopay','MX'),
+('txn-009','2024-11-12 14:05:18','fincore','u-2290','TOTALPLAY','telecom',349.00,'success',NULL,NULL,'openpay','MX'),
+('txn-010','2024-11-12 14:07:00','fincore','u-6601','CFE','electricity',910.00,'success',NULL,NULL,'nexopay','MX'),
+('txn-011','2024-11-12 14:09:33','fincore','u-1103','CFE','electricity',990.00,'failed','PROVIDER_TIMEOUT','Connection timed out after 30000ms','nexopay','MX'),
+('txn-012','2024-11-12 14:10:01','fincore','u-3374','CFE','electricity',450.00,'failed','PROVIDER_TIMEOUT','Connection timed out after 30000ms','nexopay','MX'),
+('txn-013','2024-11-12 14:10:44','fincore','u-9982','IZZI','telecom',199.00,'success',NULL,NULL,'openpay','MX'),
+('txn-014','2024-11-12 14:11:02','fincore','u-4451','CFE','electricity',1150.00,'failed','PROVIDER_TIMEOUT','Connection timed out after 30000ms','nexopay','MX'),
+('txn-015','2024-11-12 14:11:30','fincore','u-7723','TOTALPLAY','telecom',349.00,'success',NULL,NULL,'openpay','MX'),
+('txn-016','2024-11-12 14:12:05','fincore','u-2208','CFE','electricity',780.00,'failed','PROVIDER_TIMEOUT','Connection timed out after 30000ms','nexopay','MX'),
+('txn-017','2024-11-12 14:12:44','other_partner','u-0044','CFE','electricity',900.00,'failed','PROVIDER_TIMEOUT','Connection timed out after 30000ms','nexopay','MX'),
+('txn-018','2024-11-12 14:13:01','fincore','u-8819','TELMEX','telecom',299.00,'success',NULL,NULL,'openpay','MX'),
+('txn-019','2024-11-12 14:13:22','fincore','u-5562','CFE','electricity',650.00,'failed','PROVIDER_TIMEOUT','Connection timed out after 30000ms','nexopay','MX'),
+('txn-020','2024-11-12 14:14:00','fincore','u-3390','CFE','electricity',870.00,'failed','PROVIDER_TIMEOUT','Connection timed out after 30000ms','nexopay','MX'),
+('txn-021','2024-11-12 14:14:30','fincore','u-1177','CFE','electricity',430.00,'failed','PROVIDER_TIMEOUT','Connection timed out after 30000ms','nexopay','MX'),
+('txn-022','2024-11-12 14:15:02','fincore','u-6634','CFE','electricity',1050.00,'failed','PROVIDER_TIMEOUT','Connection timed out after 30000ms','nexopay','MX'),
+('txn-023','2024-11-12 14:15:45','fincore','u-9900','IZZI','telecom',199.00,'success',NULL,NULL,'openpay','MX'),
+('txn-024','2024-11-12 14:16:11','fincore','u-4423','CFE','electricity',720.00,'failed','PROVIDER_TIMEOUT','Connection timed out after 30000ms','nexopay','MX'),
+('txn-025','2024-11-12 14:16:50','fincore','u-8812','CFE','electricity',950.00,'failed','PROVIDER_TIMEOUT','Connection timed out after 30000ms','nexopay','MX'),
+('txn-026','2024-11-12 14:17:00','other_partner','u-0033','CFE','electricity',610.00,'failed','PROVIDER_TIMEOUT','Connection timed out after 30000ms','nexopay','MX'),
+('txn-027','2024-11-12 14:17:30','fincore','u-2291','CFE','electricity',840.00,'failed','PROVIDER_TIMEOUT','Connection timed out after 30000ms','nexopay','MX'),
+('txn-028','2024-11-12 14:18:05','fincore','u-7711','TOTALPLAY','telecom',349.00,'success',NULL,NULL,'openpay','MX'),
+('txn-029','2024-11-12 14:18:44','fincore','u-3302','CFE','electricity',1300.00,'failed','PROVIDER_TIMEOUT','Connection timed out after 30000ms','nexopay','MX'),
+('txn-030','2024-11-12 14:19:01','fincore','u-4490','CFE','electricity',560.00,'failed','PROVIDER_TIMEOUT','Connection timed out after 30000ms','nexopay','MX'),
+('txn-031','2024-11-12 14:19:30','fincore','u-1165','CFE','electricity',990.00,'failed','PROVIDER_TIMEOUT','Connection timed out after 30000ms','nexopay','MX'),
+('txn-032','2024-11-12 14:20:00','fincore','u-6678','CFE','electricity',430.00,'failed','PROVIDER_TIMEOUT','Connection timed out after 30000ms','nexopay','MX'),
+('txn-033','2024-11-12 14:20:30','fincore','u-9944','TELMEX','telecom',299.00,'success',NULL,NULL,'openpay','MX'),
+('txn-034','2024-11-12 14:21:00','fincore','u-2255','CFE','electricity',770.00,'failed','PROVIDER_TIMEOUT','Connection timed out after 30000ms','nexopay','MX'),
+('txn-035','2024-11-12 14:21:30','fincore','u-8830','CFE','electricity',1100.00,'failed','PROVIDER_TIMEOUT','Connection timed out after 30000ms','nexopay','MX'),
+('txn-036','2024-11-12 14:22:00','fincore','u-3311','CFE','electricity',680.00,'failed','PROVIDER_TIMEOUT','Connection timed out after 30000ms','nexopay','MX'),
+('txn-037','2024-11-12 14:22:30','other_partner','u-0022','CFE','electricity',520.00,'failed','PROVIDER_TIMEOUT','Connection timed out after 30000ms','nexopay','MX'),
+('txn-038','2024-11-12 14:23:00','fincore','u-5543','IZZI','telecom',199.00,'success',NULL,NULL,'openpay','MX'),
+('txn-039','2024-11-12 14:23:30','fincore','u-1192','CFE','electricity',890.00,'failed','PROVIDER_TIMEOUT','Connection timed out after 30000ms','nexopay','MX'),
+('txn-040','2024-11-12 14:24:00','fincore','u-4467','CFE','electricity',1020.00,'failed','PROVIDER_TIMEOUT','Connection timed out after 30000ms','nexopay','MX');
