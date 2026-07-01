@@ -3,6 +3,7 @@
 Resolución del challenge técnico para la posición de **Global Support Analyst** en Tapi.
 
 **Autor:** Gonzalo
+
 **Fecha:** Julio 2026
 
 ---
