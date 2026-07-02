@@ -104,7 +104,7 @@ No escalaría a Producto/Ingeniería en primera instancia porque los indicadores
 
 ## Herramienta usada
 
-Análisis hecho en **DBeaver Community Edition** sobre una base SQLite local cargada con `data/transactions.sql`.
+Análisis hecho en **DBeaver** sobre una base SQLite local cargada con `data/transactions.sql`.
 
 Como bonus reproducible, incluyo `analysis.py` — script en Python que corre el pipeline completo (queries + parseo del log) en un solo comando.
 
