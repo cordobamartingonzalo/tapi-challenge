@@ -91,6 +91,7 @@ Con esto queda claro que Nexopay no está respondiendo dentro del tiempo esperad
 **Equipo destino: Escalar al equipo que gestiona la relación técnica con proveedores**
 
 No escalaría a Producto/Ingeniería en primera instancia porque los indicadores (retry, logs, timeout) sugieren que el sistema de Tapi está funcionando como debería. La causa parece estar del lado del proveedor.
+
 ---
 
 ## Acciones inmediatas (en paralelo al escalamiento)
