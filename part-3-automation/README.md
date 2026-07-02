@@ -224,3 +224,28 @@ CREATE INDEX idx_alert_history_key_time
 - **Credenciales placeholder**: el JSON exportado tiene IDs de credencial que hay que reemplazar por credenciales reales al importar (Postgres, Anthropic, Slack). Los IDs actuales son solo de referencia.
 - **Umbral fijo**: el 30% está harcodeado en la query. En producción sería útil parametrizarlo por biller (ej: CFE 30%, telcos 40%) para modular la sensibilidad según volumen y criticidad de cada rail.
 - **Sin escalamiento automático**: el flujo alerta pero no escala automáticamente. La decisión de escalar al equipo responsable (Equipo de relación técnica con Nexopay) queda como paso humano posterior. Es intencional, por las razones descritas en "Por qué alertar solo al canal interno".
+
+---
+
+## Futuras features
+
+### 1. Umbral parametrizable por biller
+
+Hoy el 30% está hardcodeado en la query. En producción lo movería a una 
+tabla de configuración (`biller_thresholds`) donde cada biller tenga su 
+propio umbral según volumen y criticidad.
+
+### 2. Claim de alerta desde Slack
+
+Sumar un botón "Tomar incidente" al mensaje de Slack que envía Claude. 
+Al hacer click, el bot actualiza el mensaje mostrando quién tomó el 
+incidente y a qué hora. Evita que dos personas del equipo empiecen a 
+trabajar en paralelo sin saber que el otro ya se hizo cargo, y deja 
+trazabilidad de quién estuvo a cargo de cada incidente.
+
+
+### 5. Dashboard de MTTD/MTTR
+
+Un dashboard (Con Looker Studio / Metabase / Otra herramienta de visualización) con métricas del flujo: cuántas alertas 
+por semana, tiempo promedio entre detección y resolución, false positive 
+rate. Sirve para iterar el umbral y detectar patrones.
