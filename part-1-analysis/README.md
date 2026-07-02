@@ -13,6 +13,7 @@
 A las **14:09:33 UTC**, el proveedor **Nexopay** empezó a devolver timeouts de 30s en todas las transacciones hacia el biller **CFE**. Desde ese momento hay 100% de fallo en ese rail, afectando a **más de un partner** (no solo FinCore).
 
 **Severidad:** P1.
+
 **Escalar a:** Escalar al equipo que gestiona la relación técnica con proveedores 
 
 ---
