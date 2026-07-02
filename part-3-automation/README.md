@@ -30,7 +30,8 @@ Ese diseño tiene tres ventajas concretas:
 
 ![Diagrama del flujo n8n](diagram.png)
 
-*Screenshot del canvas de n8n con los 8 nodos configurados y conectados.*
+<img width="2303" height="1429" alt="Untitled-2026-07-02-1336" src="https://github.com/user-attachments/assets/591731e9-6ccb-40ef-b011-0cbce056e582" />
+
 
 ---
 
