@@ -96,9 +96,8 @@ No escalaría a Producto/Ingeniería en primera instancia porque los indicadores
 ## Acciones inmediatas (en paralelo al escalamiento)
 
 - [ ] Verificar status page pública de Nexopay o canal de incidentes.
-- [ ] Confirmar si ya hay un ticket técnico abierto con el proveedor.
-- [ ] Identificar todos los partners que rutean CFE por Nexopay para comunicación proactiva.
-- [ ] Evaluar viabilidad de rutear CFE temporalmente por Openpay como mitigación.
+- [ ] Verificar internamente si ya existe un caso abierto con el proveedor por este tema.
+- [ ] Identificar todos los partners que rutean CFE por Nexopay para comunicar de manera proactiva.
 
 ---
 
