@@ -14,21 +14,24 @@ Flujo de n8n que corre cada 5 minutos, consulta la DB para detectar si algún bi
 
 ## Cómo pensé el flujo
 
-El desafío principal era decidir **qué le pido a Claude y qué le pido a SQL**. Mi primera intuición fue pasarle toda la data a Claude cada 5 minutos para que analice y decida si hay incidente. Cuando lo repensé, vi que eso tenía tres problemas: gasto innecesario de tokens en las corridas sin incidente, latencia más alta que una query directa, y menos determinismo (SQL siempre da el mismo resultado, Claude puede variar sutilmente).
+El desafío principal era decidir **qué le pido a Claude y qué le pido a SQL**. Mi primera intuición fue pasarle toda la data a Claude cada 5 minutos para que analice y decida si hay incidente. Cuando lo repensé, vi que eso tenía tres problemas: 
+1. Gasto innecesario de tokens en las corridas sin incidente.
+2. Latencia más alta que una query directa.
+3. Menos determinismo (SQL siempre da el mismo resultado, Claude puede variar sutilmente).
 
-La decisión final fue **separar detección de resumen**: SQL detecta con una regla dura (umbral de 30% en ventana de 15 min), y Claude solo entra al ruedo cuando hay algo que reportar, para traducir los datos crudos en un mensaje ejecutivo accionable.
+La decisión final fue **separar detección de resumen**: SQL detecta con una regla dura (tasa de error de 30% en ventana de 15 min), y Claude solo entra al ruedo cuando hay algo que reportar, para traducir los datos crudos en un mensaje de Slack.
 
 Ese diseño tiene tres ventajas concretas:
 
 1. **Ahorra tokens**: en un día normal sin incidentes, Claude nunca se llama.
-2. **Es más rápido**: la mayoría de las corridas terminan en el primer nodo IF.
+2. **Es más rápido**: Si no hay incidente, el flujo se corta.
 3. **Aporta valor donde realmente importa**: Claude no reemplaza al SQL en detección, sino que traduce los datos a lenguaje humano y sugiere severidad.
 
 ---
 
 ## Diagrama del flujo
 
-![Diagrama del flujo]
+[Diagrama del flujo]
 
 <img width="2303" height="1429" alt="Untitled-2026-07-02-1336" src="https://github.com/user-attachments/assets/357a5151-b696-46ad-b293-d768cf072c23" />
 
@@ -68,11 +71,12 @@ Nota: el JSON del flujo asume Postgres como motor de DB.
 
 ### 3. IF — `IF: has incident?`
 
-Si la query devolvió filas → hay incidente, seguir. Si vino vacía → cortar el flujo. En un día normal sin incidentes, la mayoría del tiempo el flujo termina acá, sin consumir ningún recurso adicional.
+Si la query devolvió filas → hay incidente, seguir. 
+Si vino vacía → cortar el flujo. En un día normal sin incidentes, la mayoría del tiempo el flujo termina acá, sin consumir ningún recurso adicional.
 
 ### 4. SQL — `SQL: check dedupe`
 
-Antes de disparar una alerta a Slack, necesitamos saber si este mismo 
+Antes de disparar una alerta a Slack, pensé en que habría que saber si este mismo 
 incidente ya fue reportado hace poco. Sin esta verificación, el flujo 
 mandaría una alerta cada 5 minutos mientras el incidente siga activo, 
 saturando el canal.
