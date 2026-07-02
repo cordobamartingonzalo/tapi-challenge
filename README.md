@@ -57,7 +57,7 @@ cd tapi-challenge/part-1-analysis
 python3 analysis.py
 ​```
 
-El script carga `transactions.sql` en una base SQLite en memoria, corre las 
+El script carga `transactions.sql` en una base SQLite, corre las 
 queries y parsea `app.log`.
 
 Como alternativa, se puede importar `data/transactions.sql` en DBeaver 
