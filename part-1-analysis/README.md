@@ -1,8 +1,6 @@
 # Parte 1 — Análisis del incidente
 
-**Autor:** Gonzalo
-
-**Fecha:** 12/11/2024
+**Autor:** Martin Gonzalo Cordoba
 
 **Reporte inicial:** FinCore, 14:32 UTC
 
@@ -14,42 +12,42 @@ A las **14:09:33 UTC**, el proveedor **Nexopay** empezó a devolver timeouts de 
 
 **Severidad:** P1.
 
-**Escalar a:** Escalar al equipo que gestiona la relación técnica con proveedores 
+**Escalar a:** equipo que gestiona la relación técnica con proveedores.
 
 ---
 
 ## 1. Cuándo empezó
 
-**T0: 2024-11-12 14:09:33 UTC** — transacción `txn-011` (fincore / CFE / nexopay), primer `PROVIDER_TIMEOUT`.
+Para ubicar el inicio del problema, agrupé las transacciones por minuto en `transactions.sql` y calculé el porcentaje de fallo en cada bucket. La curva muestra un cambio abrupto: hasta las 14:07 UTC no hay ni un solo fallo en toda la ventana de 2 hs, y a las 14:09:33 UTC aparece la primera transacción caída.
 
-Antes de esa hora, cero fallos en toda la ventana de 2 hs. El cambio es abrupto.
+**T0 del incidente: 2024-11-12 14:09:33 UTC** — transacción `txn-011` (fincore / CFE / nexopay), primer `PROVIDER_TIMEOUT`.
 
-Query: `queries/01_timeline.sql`
+Query utilizada: `queries/01_timeline.sql`
 
 ---
 
 ## 2. Qué está fallando
 
-Descomposición desde T0:
+Con el T0 identificado, descompuse las transacciones desde ese momento por proveedor para ver dónde se concentraban los fallos.
 
 | provider | total | ok | fail |
 |---|---|---|---|
 | nexopay | 23 | 0 | 23 |
 | openpay | 7 | 7 | 0 |
 
+Luego de analizar `transactions.sql` identifiqué 23 fallos que comparten exactamente el mismo `error_code` y `error_message`, sin dispersión — comportamiento sistemático, no ruido puntual.
+
 - **Biller afectado:** CFE (categoría electricity).
 - **Proveedor afectado:** Nexopay.
 - **Error:** `PROVIDER_TIMEOUT` — "Connection timed out after 30000ms".
 
-Los 23 fallos comparten exactamente el mismo `error_code` y `error_message`. Sin dispersión → comportamiento sistemático, no ruido.
-
-Queries: `queries/02_provider_biller.sql`, `queries/04_error_signature.sql`
+Queries utilizadas: `queries/02_provider_biller.sql`, `queries/04_error_signature.sql`
 
 ---
 
 ## 3. Alcance: FinCore + otros partners
 
-Cross-partner desde T0:
+El reporte inicial vino de FinCore, pero de manera protocolar revisé si otros partners estaban siendo afectados. Crucé partner con proveedor filtrando desde el T0.
 
 | partner_id | provider | total | fallidas | pct_fallo |
 |---|---|---|---|---|
@@ -57,20 +55,22 @@ Cross-partner desde T0:
 | fincore | openpay | 7 | 0 | 0% |
 | other_partner | nexopay | 3 | 3 | 100% |
 
-Dos observaciones:
+Aparecen dos datos importantes:
 
 - `other_partner` también falla al 100% cuando usa Nexopay → el problema no es del partner, es de Nexopay.
-- FinCore procesa OK por Openpay → su integración con Tapi está sana.
+- FinCore procesa OK por Openpay → su integración con Tapi está ok.
 
-El fallo se da en todas las transacciones con el flujo Nexopay → CFE sin importar qué partner las envíe. FinCore reportó primero probablemente por volumen de transacciones.
+El fallo se da en todas las transacciones con el flujo Nexopay → CFE sin importar qué partner las envíe.
 
-Query: `queries/03_cross_partner.sql`
+Query utilizada: `queries/03_cross_partner.sql`
 
 ---
 
 ## 4. Evidencia del log
 
-- **Latencia idéntica en todos los fallos:** 30001–30003 ms. El timeout parejo indica que el sistema está aplicando el corte al llegar al límite configurado, no una latencia variable del proveedor.
+Hasta acá el diagnóstico venía de la DB `transactions.sql`. Complementando con `app.log` pude confirmar tres cosas más que ayudan a cerrar la hipótesis:
+
+- **Latencia idéntica en todos los fallos:** 30001–30003 ms. Un timeout alto y parejo indica que el sistema está aplicando el corte al llegar al límite configurado, no parece ser algo variable.
 - **Sistema de retry funcionando:** 3 intentos por transacción, todos fallan con el mismo error → el reintento está ejecutándose como se espera, pero no cambia el resultado.
 - **Openpay funcionando:** latencias normales (700–900 ms) durante toda la ventana. Descarta problemas de red o del servicio de pagos en general.
 
@@ -80,6 +80,8 @@ Con esto queda claro que Nexopay no está respondiendo dentro del tiempo esperad
 
 ## Clasificación y escalamiento
 
+Con el diagnóstico armado, propongo la siguiente clasificación:
+
 **Severidad: P1**
 
 - Servicio core (procesamiento de pagos) caído.
@@ -88,9 +90,7 @@ Con esto queda claro que Nexopay no está respondiendo dentro del tiempo esperad
 - Revenue perdido para Tapi y partners.
 - Reputacional: partner enterprise ya escaló.
 
-**Equipo destino: Escalar al equipo que gestiona la relación técnica con proveedores**
-
-No escalaría a Producto/Ingeniería en primera instancia porque los indicadores (retry, logs, timeout) sugieren que el sistema de Tapi está funcionando como debería. La causa parece estar del lado del proveedor.
+**Equipo destino:** equipo que gestiona la relación técnica con proveedores.
 
 ---
 
@@ -102,11 +102,10 @@ No escalaría a Producto/Ingeniería en primera instancia porque los indicadores
 
 ---
 
-## Herramienta usada
+## Herramientas usadas
 
-Análisis hecho en **DBeaver** sobre una base SQLite local cargada con `data/transactions.sql`.
-
-Como bonus reproducible, incluyo `analysis.py` — script en Python que corre el pipeline completo (queries + parseo del log) en un solo comando.
+- **DBeaver** sobre una base SQLite local cargada con `data/transactions.sql`, para ejecutar las queries del análisis.
+- **Python** (`analysis.py`) como bonus reproducible: corre el pipeline completo (queries + parseo del log) en un solo comando.
 
 ## Cómo reproducir
 
