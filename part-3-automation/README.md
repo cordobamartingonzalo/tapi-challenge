@@ -171,7 +171,7 @@ En términos técnicos, este flujo baja el MTTD (Mean Time To Detect) de ~23 min
 
 1. Abrir n8n (local o n8n.cloud).
 2. Menú superior → **Workflows** → **Import from File**.
-3. Seleccionar `workflow.json`.
+3. Seleccionar `workflow-challenge.json`.
 4. El flujo aparece en el canvas con los 8 nodos conectados.
 5. Configurar las credenciales en cada nodo:
    - **Postgres** (nodos SQL): host, port, user, password, database.
@@ -196,12 +196,12 @@ CREATE INDEX idx_alert_history_key_time
 
 ## Herramientas usadas
 
-- **n8n Cloud** (trial gratuito) para armar y probar el flujo visualmente.
-- **Claude** integrado vía HTTP Request al endpoint `api.anthropic.com/v1/messages`, para generar los mensajes de alerta en lenguaje natural. El prompt está diseñado para producir output consistente en formato Slack.
+- **n8n Cloud** para armar y probar el flujo visualmente.
+- **Claude** integrado vía HTTP Request al endpoint `api.anthropic.com/v1/messages`, para generar los mensajes de alerta. El prompt está diseñado para producir output consistente en formato para un mensaje de Slack.
 - **Postgres** como motor de DB asumido (podría adaptarse fácilmente a MySQL o SQLite ajustando la sintaxis de las queries).
 
 ## Limitaciones conocidas
 
-- **Credenciales placeholder**: el JSON exportado tiene IDs de credencial que hay que reemplazar por credenciales reales al importar (Postgres, Anthropic, Slack). Los IDs actuales sirven como referencia de qué integraciones necesita configurar el evaluador.
+- **Credenciales placeholder**: el JSON exportado tiene IDs de credencial que hay que reemplazar por credenciales reales al importar (Postgres, Anthropic, Slack). Los IDs actuales son solo de referencia.
 - **Umbral fijo**: el 30% está harcodeado en la query. En producción sería útil parametrizarlo por biller (ej: CFE 30%, telcos 40%) para modular la sensibilidad según volumen y criticidad de cada rail.
 - **Sin escalamiento automático**: el flujo alerta pero no escala automáticamente. La decisión de escalar a Vendor Ops queda como paso humano posterior. Es intencional, por las razones descritas en "Por qué alertar solo al canal interno".
