@@ -49,17 +49,20 @@ tapi-challenge/
 
 ## Cómo reproducir el análisis (Parte 1)
 
-Solo se necesita **Python 3.8+** (SQLite viene incluido).
+Requiere Python 3.8+.
 
-```bash
+​```bash
 git clone https://github.com/<usuario>/tapi-challenge.git
 cd tapi-challenge/part-1-analysis
 python3 analysis.py
-```
+​```
 
-El script carga `transactions.sql` en una base SQLite in-memory, corre las queries y parsea `app.log`. Reproduce todos los outputs del análisis en menos de un segundo.
+El script carga `transactions.sql` en una base SQLite en memoria, corre las 
+queries y parsea `app.log`.
 
-Alternativa con cliente SQL (DBeaver, TablePlus, DataGrip): importar `data/transactions.sql` en una instancia SQLite o Postgres, y correr manualmente las queries en `part-1-analysis/queries/`.
+Como alternativa, se puede importar `data/transactions.sql` en DBeaver 
+(o cualquier cliente SQL) y correr las queries de `part-1-analysis/queries/` 
+manualmente. Es como armé el análisis originalmente.
 
 ---
 
