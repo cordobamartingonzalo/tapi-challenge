@@ -32,7 +32,7 @@ tapi-challenge/
 │   └── queries/
 │       ├── 01_timeline.sql
 │       ├── 02_provider_biller.sql
-│       ├── 03_cross_partner.sql   ← La query clave
+│       ├── 03_cross_partner.sql   
 │       ├── 04_error_signature.sql
 │       └── 05_t0_exact.sql
 │
