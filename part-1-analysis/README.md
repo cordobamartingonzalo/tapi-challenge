@@ -69,11 +69,11 @@ Query: `queries/03_cross_partner.sql`
 
 ## 4. Evidencia del log
 
-- **Latencia idéntica en todos los fallos:** 30001–30003 ms. Un timeout parejo indica cutoff del sistema al llegar al límite, no un proveedor con latencia variable.
-- **Sistema de retry funcionando:** 3 intentos por transacción, todos fallan con el mismo error. El servicio interno de Tapi hace lo que debe.
-- **Openpay verde:** latencias normales (700–900 ms) durante toda la ventana. Descarta problemas de red o del servicio de pagos en general.
+- **Latencia idéntica en todos los fallos:** 30001–30003 ms. El timeout parejo indica que el sistema está aplicando el corte al llegar al límite configurado, no una latencia variable del proveedor.
+- **Sistema de retry funcionando:** 3 intentos por transacción, todos fallan con el mismo error → el reintento está ejecutándose como se espera, pero no cambia el resultado.
+- **Openpay funcionando:** latencias normales (700–900 ms) durante toda la ventana. Descarta problemas de red o del servicio de pagos en general.
 
-Nexopay no está respondiendo (o responde después del cutoff). Problema localizado en el link Tapi → Nexopay.
+Con esto queda claro que Nexopay no está respondiendo dentro del tiempo esperado, y el problema está del lado del proveedor.
 
 ---
 
@@ -83,7 +83,7 @@ Nexopay no está respondiendo (o responde después del cutoff). Problema localiz
 
 - Servicio core (procesamiento de pagos) caído.
 - Multi-partner impactado.
-- Impacto directo en usuario final (no pueden pagar la luz).
+- Impacto directo en usuario final (no pueden pagar servicios).
 - Revenue perdido para Tapi y partners.
 - Reputacional: partner enterprise ya escaló.
 
