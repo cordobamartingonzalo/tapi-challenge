@@ -223,4 +223,4 @@ CREATE INDEX idx_alert_history_key_time
 
 - **Credenciales placeholder**: el JSON exportado tiene IDs de credencial que hay que reemplazar por credenciales reales al importar (Postgres, Anthropic, Slack). Los IDs actuales son solo de referencia.
 - **Umbral fijo**: el 30% está harcodeado en la query. En producción sería útil parametrizarlo por biller (ej: CFE 30%, telcos 40%) para modular la sensibilidad según volumen y criticidad de cada rail.
-- **Sin escalamiento automático**: el flujo alerta pero no escala automáticamente. La decisión de escalar a Vendor Ops queda como paso humano posterior. Es intencional, por las razones descritas en "Por qué alertar solo al canal interno".
+- **Sin escalamiento automático**: el flujo alerta pero no escala automáticamente. La decisión de escalar al equipo responsable (Equipo de relación técnica con Nexopay) queda como paso humano posterior. Es intencional, por las razones descritas en "Por qué alertar solo al canal interno".
