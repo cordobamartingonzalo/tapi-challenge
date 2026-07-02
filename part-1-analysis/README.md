@@ -13,7 +13,7 @@
 A las **14:09:33 UTC**, el proveedor **Nexopay** empezó a devolver timeouts de 30s en todas las transacciones hacia el biller **CFE**. Desde ese momento hay 100% de fallo en ese rail, afectando a **más de un partner** (no solo FinCore).
 
 **Severidad:** P1.
-**Escalar a:** Vendor Ops / Provider Integrations (contacto técnico con Nexopay).
+**Escalar a:** Escalar al equipo que gestiona la relación técnica con proveedores 
 
 ---
 
@@ -87,10 +87,9 @@ Con esto queda claro que Nexopay no está respondiendo dentro del tiempo esperad
 - Revenue perdido para Tapi y partners.
 - Reputacional: partner enterprise ya escaló.
 
-**Equipo destino: Vendor Ops / Provider Integrations.**
+**Equipo destino: Escalar al equipo que gestiona la relación técnica con proveedores**
 
-No corresponde escalar a Producto/Ingeniería en primera instancia: el código de Tapi funciona correctamente (retry, logs, cutoff). El fallo está fuera del perímetro de Tapi.
-
+No escalaría a Producto/Ingeniería en primera instancia porque los indicadores (retry, logs, timeout) sugieren que el sistema de Tapi está funcionando como debería. La causa parece estar del lado del proveedor.
 ---
 
 ## Acciones inmediatas (en paralelo al escalamiento)
