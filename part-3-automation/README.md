@@ -182,7 +182,7 @@ Dos incidentes simultáneos en combinaciones distintas (ej: Nexopay+CFE y Openpa
 
 En el caso analizado en la Parte 1, el gap entre el inicio del incidente (14:09:33) y el reporte del cliente (14:32) fue de **23 minutos**. Con este flujo activo, el gap máximo entre el inicio del incidente y la detección interna es de **5 minutos** (el intervalo del cron).
 
-En términos técnicos, este flujo baja el MTTD (Mean Time To Detect) de ~23 min a <5 min para este tipo específico de incidente (degradación de rail proveedor+biller).
+En términos técnicos, este flujo baja el MTTD (Mean Time To Detect) de ~23 min a <5 min para este tipo específico de incidente.
 
 ---
 
