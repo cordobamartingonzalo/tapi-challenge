@@ -1,0 +1,300 @@
+{
+  "name": "Tapi challenge — provider/biller incident detection",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger-node",
+      "name": "Every 5 min",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [100, 300],
+      "notes": "cron principal. cambiar aca si quiero probar cada 1 min"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- detecta biller+provider con >30% fallo en 15 min\n-- piso 5 txns porque si no 1 fallo aislado dispara alerta\n\nSELECT\n  provider,\n  biller_id,\n  COUNT(*) AS total,\n  SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) AS fallidas,\n  ROUND(100.0 * SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) / COUNT(*), 1) AS pct_fallo,\n  MIN(created_at) AS ventana_desde,\n  MAX(created_at) AS ventana_hasta,\n  STRING_AGG(DISTINCT partner_id, ', ') AS partners_afectados\nFROM transactions\nWHERE created_at >= NOW() - INTERVAL '15 minutes'\nGROUP BY provider, biller_id\nHAVING\n  COUNT(*) >= 5\n  AND (100.0 * SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) / COUNT(*)) > 30;",
+        "options": {}
+      },
+      "id": "sql-detection-node",
+      "name": "SQL: detect threshold",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [300, 300],
+      "credentials": {
+        "postgres": {
+          "id": "tapi-db-local",
+          "name": "Postgres Tapi challenge"
+        }
+      },
+      "notes": "query principal. filtra los ultimos 15min con umbral 30%"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "has-rows-check",
+              "leftValue": "={{ $json.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-has-incident-node",
+      "name": "IF: has incident?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [500, 300],
+      "notes": "Si no hay filas se corta. No llamar a Claude si no hay incidente"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- chequeo si ya alertamos este incidente en la ultima media hora\n-- clave = provider+biller para que incidentes distintos no se pisen\n\nSELECT COUNT(*) AS recent_alerts\nFROM alert_history\nWHERE alert_key = '{{ $json.provider }}-{{ $json.biller_id }}'\n  AND sent_at >= NOW() - INTERVAL '30 minutes';",
+        "options": {}
+      },
+      "id": "sql-dedupe-check-node",
+      "name": "SQL: check dedupe",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [700, 300],
+      "credentials": {
+        "postgres": {
+          "id": "tapi-db-local",
+          "name": "Postgres Tapi challenge"
+        }
+      },
+      "notes": "dedupe. si ya avise en la ultima media hora, corto"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "already-alerted-check",
+              "leftValue": "={{ $json.recent_alerts }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-not-alerted-node",
+      "name": "IF: already alerted?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [900, 300],
+      "notes": "si ya se alerto, corto. si no, sigo a Claude"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "{{ $credentials.anthropicApi.apiKey }}"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-sonnet-4-5\",\n  \"max_tokens\": 500,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"Sos un asistente de soporte técnico en una fintech de pagos B2B.\\nSe detectó un posible incidente en la infraestructura de pagos.\\n\\nDatos del incidente:\\n- Proveedor: {{ $node['SQL: detect threshold'].json.provider }}\\n- Biller: {{ $node['SQL: detect threshold'].json.biller_id }}\\n- Total transacciones en la ventana: {{ $node['SQL: detect threshold'].json.total }}\\n- Fallidas: {{ $node['SQL: detect threshold'].json.fallidas }}\\n- Tasa de fallo: {{ $node['SQL: detect threshold'].json.pct_fallo }}%\\n- Ventana temporal: desde {{ $node['SQL: detect threshold'].json.ventana_desde }} hasta {{ $node['SQL: detect threshold'].json.ventana_hasta }}\\n- Partners afectados: {{ $node['SQL: detect threshold'].json.partners_afectados }}\\n\\nGenerá un mensaje corto y accionable para el canal interno de monitoreo en Slack.\\n\\nFormato esperado:\\n:rotating_light: *Incidente detectado*\\n*Qué:* [una línea sobre qué está fallando]\\n*Desde:* [ventana temporal]\\n*Impacto:* [cantidad + partners]\\n*Severidad sugerida:* [P1/P2/P3] — [criterio breve]\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "http-claude-api-node",
+      "name": "Claude: generate summary",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1100, 300],
+      "credentials": {
+        "anthropicApi": {
+          "id": "anthropic-personal",
+          "name": "Anthropic API"
+        }
+      },
+      "notes": "genera el resumen para Slack. solo entra si hay incidente y no fue alertado"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#alerts-support",
+          "mode": "name"
+        },
+        "text": "={{ $json.content[0].text }}",
+        "otherOptions": {}
+      },
+      "id": "slack-send-alert-node",
+      "name": "Slack: send alert",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [1300, 300],
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "slack-tapi-demo",
+          "name": "Slack workspace"
+        }
+      },
+      "notes": "manda al canal interno, no directo al partner"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- registro que se envio la alerta\n-- sin esto la dedupe no funciona en la proxima corrida\n\nINSERT INTO alert_history (alert_key, sent_at)\nVALUES (\n  '{{ $node['SQL: detect threshold'].json.provider }}-{{ $node['SQL: detect threshold'].json.biller_id }}',\n  NOW()\n);",
+        "options": {}
+      },
+      "id": "sql-log-alert-node",
+      "name": "SQL: log alert",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [1500, 300],
+      "credentials": {
+        "postgres": {
+          "id": "tapi-db-local",
+          "name": "Postgres Tapi challenge"
+        }
+      },
+      "notes": "guarda el registro para que la dedupe funcione la proxima corrida"
+    }
+  ],
+  "connections": {
+    "Every 5 min": {
+      "main": [
+        [
+          {
+            "node": "SQL: detect threshold",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SQL: detect threshold": {
+      "main": [
+        [
+          {
+            "node": "IF: has incident?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: has incident?": {
+      "main": [
+        [
+          {
+            "node": "SQL: check dedupe",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "SQL: check dedupe": {
+      "main": [
+        [
+          {
+            "node": "IF: already alerted?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF: already alerted?": {
+      "main": [
+        [
+          {
+            "node": "Claude: generate summary",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Claude: generate summary": {
+      "main": [
+        [
+          {
+            "node": "Slack: send alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack: send alert": {
+      "main": [
+        [
+          {
+            "node": "SQL: log alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "all",
+    "saveExecutionProgress": true
+  },
+  "meta": {},
+  "tags": [
+    {
+      "name": "tapi-challenge"
+    },
+    {
+      "name": "incident-detection"
+    }
+  ]
+}
