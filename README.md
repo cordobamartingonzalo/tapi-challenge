@@ -40,7 +40,7 @@ tapi-challenge/
 │   └── README.md
 │
 └── part-3-automation/             → Flujo de detección automática en n8n
-    ├── README.md                  → Descripción del flujo + decisiones de diseño
+    ├── README.md                  → Descripción del flujo + decisiones de diseño + futuras features
     ├── workflow.json              → Export del flujo (importable en n8n)
     └── diagram.png                → Screenshot del flujo armado
 ```
