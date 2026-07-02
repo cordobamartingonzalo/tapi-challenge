@@ -10,12 +10,11 @@ Resolución del challenge técnico para la posición de **Global Support Analyst
 
 Encaré el challenge tratando de simular lo más fielmente posible lo que haría en el día 1 del rol: ante un reporte urgente de un partner enterprise, no quedarme con el síntoma que reporta el cliente, sino ir a la causa raíz con los datos y logs disponibles. Prioricé tres cosas:
 
-1. **Rigor en el análisis.** Cargué la DB en SQLite y armé queries progresivas — desde "¿cuándo empezó?" hasta "¿esto es transversal a más partners?" — para no saltar a conclusiones. El paso decisivo del caso es entender que el fallo no es del biller (CFE) ni del partner (FinCore), sino del proveedor upstream (Nexopay). Sin esa lectura, la comunicación al cliente y el escalamiento salen mal.
+1. **Rigor en el análisis.** Cargué la DB en DBeaver y armé queries progresivas — desde "¿cuándo empezó?" hasta "¿esto es transversal a más partners?" — para no saltar a conclusiones. El paso decisivo del caso es entender que el fallo no es del biller (CFE) ni del partner (FinCore), sino del proveedor upstream (Nexopay). Sin esa lectura, la comunicación al cliente y el escalamiento salen mal.
 2. **Comunicación honesta al cliente.** El mensaje a FinCore está pensado para dar señal de control sin sobrecomprometerse — reconocer lo que estamos viendo del lado nuestro, no prometer un ETA que todavía no tenemos, y dar un compromiso concreto de próximo update.
-3. **Automatización con criterio.** El flujo en n8n no es solo una alerta: incluye deduplicación (para no spamear el canal cada 5 min con el mismo incidente) y un enriquecimiento con Claude vía API que resume el impacto en lenguaje natural. Ahí uso mi experiencia previa integrando Claude en flujos operativos.
+3. **Automatización con criterio.** El flujo en n8n no es solo una alerta: incluye deduplicación (para no spamear el canal cada 5 min con el mismo incidente) y un enriquecimiento con Claude vía API que resume el impacto en un mensaje de Slack para que el equipo pueda revisarlo y tomar acción sobre el incidente.
 
-Sobre el stack: SQL + Python (pandas y sqlite in-memory) + n8n + Claude API. Todo lo que uso en el día a día.
-
+Stack utilizado en todo el challenge: DBeaver + SQL + Python (sqlite3 in-memory) + n8n + Claude API + Slack Webhook
 ---
 
 ## Estructura del repo
@@ -73,10 +72,10 @@ Alternativa con cliente SQL (DBeaver, TablePlus, DataGrip): importar `data/trans
 
 ---
 
-## Resumen ejecutivo del incidente (spoiler alert)
+## Resumen ejecutivo del incidente
 
 - **T0:** 12/11/2024 14:09:33 UTC
 - **Causa raíz:** Proveedor Nexopay devuelve timeouts consistentes de 30s en todas las llamadas para el biller CFE.
 - **Impacto:** 100% de fallo en transacciones ruteadas por Nexopay hacia CFE desde T0. **Cross-partner** — no solo FinCore.
 - **Severidad:** P1.
-- **Escalamiento:** Vendor Ops / Provider Integrations (equipo con relación técnica con Nexopay).
+- **Escalamiento:** Equipo con relación técnica con Nexopay
