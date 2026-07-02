@@ -110,7 +110,7 @@ Como bonus reproducible, incluyo `analysis.py` — script en Python que corre el
 
 ## Cómo reproducir
 
-### Opción 1 — DBeaver (recomendado)
+### Opción 1 — DBeaver
 
 1. Nueva conexión SQLite → apuntar a un archivo `.db` nuevo.
 2. Abrir SQL Editor, pegar `data/transactions.sql`, ejecutar con `Alt + X`.
@@ -121,5 +121,3 @@ Como bonus reproducible, incluyo `analysis.py` — script en Python que corre el
 ```bash
 python3 analysis.py
 ```
-
-Requiere solo Python 3.8+ (SQLite viene incluido).
