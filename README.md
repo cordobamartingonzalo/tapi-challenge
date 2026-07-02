@@ -10,7 +10,7 @@ Resolución del challenge técnico para la posición de **Global Support Analyst
 
 Encaré el challenge tratando de simular lo más fielmente posible lo que haría en el día 1 del rol: ante un reporte urgente de un partner enterprise, no quedarme con el síntoma que reporta el cliente, sino ir a la causa raíz con los datos y logs disponibles. Prioricé tres cosas:
 
-1. **Rigor en el análisis.** Cargué `transactions.sql` en DBeaver y armé queries progresivas — desde "¿cuándo empezó?" hasta "¿esto es transversal a más partners?" — para no saltar a conclusiones. El paso decisivo del caso es entender que el fallo no es del biller (CFE) ni del partner (FinCore), sino del proveedor upstream (Nexopay). Sin esa lectura, la comunicación al cliente y el escalamiento salen mal.
+1. **Análisis riguroso.** Cargué `transactions.sql` en DBeaver y armé queries progresivas — desde "¿cuándo empezó?" hasta "¿esto es transversal a más partners?" — para no saltar a conclusiones. El paso decisivo del caso es entender que el fallo no es del biller (CFE) ni del partner (FinCore), sino del proveedor upstream (Nexopay). Sin esa lectura, la comunicación al cliente y el escalamiento salen mal.
 2. **Comunicación honesta al cliente.** El mensaje a FinCore está pensado para dar señal de control sin sobrecomprometerse — reconocer lo que estamos viendo del lado nuestro, no prometer un ETA que todavía no tenemos, y dar un compromiso concreto de próximo update.
 3. **Automatización con criterio.** El flujo en n8n no es solo una alerta: incluye deduplicación (para no spamear el canal cada 5 min con el mismo incidente) y un enriquecimiento con Claude vía API que resume el impacto en un mensaje de Slack para que el equipo pueda revisarlo y tomar acción sobre el incidente.
 
