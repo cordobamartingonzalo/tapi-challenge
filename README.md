@@ -15,6 +15,7 @@ Encaré el challenge tratando de simular lo más fielmente posible lo que haría
 3. **Automatización con criterio.** El flujo en n8n no es solo una alerta: incluye deduplicación (para no spamear el canal cada 5 min con el mismo incidente) y un enriquecimiento con Claude vía API que resume el impacto en un mensaje de Slack para que el equipo pueda revisarlo y tomar acción sobre el incidente.
 
 Stack utilizado en todo el challenge: DBeaver + SQL + Python (sqlite3 in-memory) + n8n + Claude API + Slack Webhook
+
 ---
 
 ## Estructura del repo
