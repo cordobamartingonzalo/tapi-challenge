@@ -28,9 +28,10 @@ Ese diseño tiene tres ventajas concretas:
 
 ## Diagrama del flujo
 
-![Diagrama del flujo n8n](diagram.png)
+![Diagrama del flujo]
 
-<img width="2303" height="1429" alt="Untitled-2026-07-02-1336" src="https://github.com/user-attachments/assets/591731e9-6ccb-40ef-b011-0cbce056e582" />
+<img width="2303" height="1429" alt="Untitled-2026-07-02-1336" src="https://github.com/user-attachments/assets/357a5151-b696-46ad-b293-d768cf072c23" />
+
 
 
 ---
