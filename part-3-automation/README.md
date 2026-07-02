@@ -243,8 +243,7 @@ incidente y a qué hora. Evita que dos personas del equipo empiecen a
 trabajar en paralelo sin saber que el otro ya se hizo cargo, y deja 
 trazabilidad de quién estuvo a cargo de cada incidente.
 
-
-### 5. Dashboard de MTTD/MTTR
+### 3. Dashboard de MTTD/MTTR
 
 Un dashboard (Con Looker Studio / Metabase / Otra herramienta de visualización) con métricas del flujo: cuántas alertas 
 por semana, tiempo promedio entre detección y resolución, false positive 
