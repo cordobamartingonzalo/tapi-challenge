@@ -1,9 +1,10 @@
 # Parte 1 — Análisis del incidente
 
 **Autor:** Gonzalo
+
 **Fecha:** 12/11/2024
+
 **Reporte inicial:** FinCore, 14:32 UTC
-**Duración del análisis:** ~40 min
 
 ---
 
