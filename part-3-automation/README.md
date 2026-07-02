@@ -40,7 +40,7 @@ Ese diseño tiene tres ventajas concretas:
 
 ### 1. Schedule Trigger — `Every 5 min`
 
-Cron que dispara el flujo cada 5 minutos. Es el heartbeat del sistema. No requiere lógica adicional.
+Nodo que dispara el flujo cada 5 minutos. 
 
 ### 2. SQL — `SQL: detect threshold`
 
@@ -64,7 +64,7 @@ HAVING
   AND (100.0 * SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) / COUNT(*)) > 30;
 ```
 
-Nota: el JSON del flujo asume Postgres como motor de DB. En un contexto productivo real, la query apuntaría a una réplica de solo lectura o al data warehouse, nunca a la DB primaria de producción.
+Nota: el JSON del flujo asume Postgres como motor de DB.
 
 ### 3. IF — `IF: has incident?`
 
@@ -72,24 +72,36 @@ Si la query devolvió filas → hay incidente, seguir. Si vino vacía → cortar
 
 ### 4. SQL — `SQL: check dedupe`
 
-Consulta la tabla auxiliar `alert_history` para saber si ya alertamos este mismo incidente (misma combinación `provider-biller`) en los últimos 30 minutos.
+Antes de disparar una alerta a Slack, necesitamos saber si este mismo 
+incidente ya fue reportado hace poco. Sin esta verificación, el flujo 
+mandaría una alerta cada 5 minutos mientras el incidente siga activo, 
+saturando el canal.
 
-```sql
+Para resolverlo generé una tabla auxiliar `alert_history` que cumple dos 
+funciones: 
+1. Registrar cada incidente alertado (lo hace el último nodo del 
+flujo)
+2. Ser consultada en cada nueva ejecución para verificar si ese 
+mismo incidente ya fue notificado.
+
+​```sql
 SELECT COUNT(*) AS recent_alerts
 FROM alert_history
 WHERE alert_key = '{{ provider }}-{{ biller_id }}'
   AND sent_at >= NOW() - INTERVAL '30 minutes';
-```
+​```
 
-La clave compuesta `provider-biller` permite que incidentes distintos que ocurran simultáneamente (ej: Nexopay+CFE y Openpay+TELMEX al mismo tiempo) se traten como incidentes independientes y no se dedupliquen entre sí.
-
+La `alert_key` es la combinación `provider-biller` porque el incidente no 
+está definido por una transacción individual sino por el rail que se cae. 
+Cuando falla Nexopay hacia CFE, todas las transacciones que pasan por ahí 
+fallan juntas — para el sistema es un solo incidente, no 20 separados.
 ### 5. IF — `IF: already alerted?`
 
 Si ya hubo una alerta reciente para este incidente → cortar. Si es la primera detección → seguir hacia Claude.
 
 ### 6. HTTP Request — `Claude: generate summary`
 
-Llamada a la API de Claude con un prompt que le pasa los datos del incidente y le pide un resumen ejecutivo en formato Slack. El prompt está diseñado para que Claude genere una estructura consistente con severidad sugerida y próxima acción, no un texto libre variable.
+Llamada a la API de Claude con un prompt que le pasa los datos del incidente y le pide un resumen ejecutivo en formato de mensaje para Slack. El prompt está diseñado para que Claude genere un mensaje estructurado
 
 El prompt sigue este formato:
 
@@ -135,7 +147,11 @@ VALUES ('{{ provider }}-{{ biller_id }}', NOW());
 
 ### Por qué SQL detecta y Claude resume
 
-Alternativa considerada: mandar toda la data a Claude en cada corrida y que él decida si hay incidente. Descartada por costo (llamadas innecesarias), latencia y determinismo. La decisión del umbral es una regla matemática — no necesita LLM.
+La detección del incidente la resuelvo con SQL, en el nodo `SQL: detect 
+threshold` (el umbral del 30% con piso de 5 transacciones). Claude entra 
+al ruedo solo cuando ya hay algo que reportar, para traducir los datos 
+crudos en un mensaje ejecutivo accionable con sugerencia de severidad y 
+próximos pasos.
 
 ### Por qué el piso de 5 transacciones
 
@@ -149,9 +165,8 @@ Si el incidente dura más de 30 minutos, se dispara una nueva alerta como record
 
 Un humano confirma el incidente antes de notificar al partner. Las razones:
 
-- Evitar falsos positivos hacia clientes enterprise (el costo reputacional es alto).
-- La comunicación al partner requiere criterio: modular tono, agregar contexto, confirmar magnitud.
-- El diseño del challenge lo sugiere: la Parte 2 del challenge (mensaje al partner) es un paso separado, humano.
+- Evitar falsos positivos hacia clientes enterprise.
+- La comunicación al partner requiere criterio.
 
 ### Por qué la clave de dedupe es `provider-biller`
 
